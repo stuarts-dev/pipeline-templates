@@ -1,0 +1,72 @@
+name: 'Template: Terraform Apply'
+
+on:
+  workflow_call:
+    inputs:
+      cloud:
+        description: 'The cloud on which the resources will be provisioned'
+        requried: false
+        type: string        
+      account:
+        description: 'The name of the GitHub Account'
+        required: false
+        type: string
+        default: 'stuarts-dev'
+      project:
+        description: 'Project directory name'
+        required: true
+        type: string
+        default: 'az-demo'
+      environment:
+        description: 'Environment directory name'
+        required: true
+        type: string
+        default: 'development'
+      component:
+        description: 'The name of the component repository'
+        required: true
+        type: string
+      version:
+        description: 'The version/tag of the component'
+        required: true
+        type: string
+      
+jobs:
+  terraform:
+    name: 'Run Terraform'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Variables
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.account }}/${{ inputs.project }}
+          path: vars
+
+      - name: Checkout Component
+        uses: actions/checkout@v4
+        with:
+          # Dynamically builds the repo name based on the input!
+          repository: ${{ inputs.account }}/${{ inputs.cloud }}-${{ inputs.component }}-component
+          path: component
+          ref: ${{ inputs.version }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ./component
+        run: |
+          terraform init \
+            -backend-config="../vars/${{ inputs.environment }}/${{ inputs.component }}/backend.tfvars"
+
+      - name: Terraform Plan
+        working-directory: ./component-repo
+        run: |
+          terraform plan \
+            -var-file="../vars/${{ inputs.environment }}/${{ inputs.component }}/terraform.tfvars" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: ./component-repo
+        run: terraform apply -auto-approve tfplan
