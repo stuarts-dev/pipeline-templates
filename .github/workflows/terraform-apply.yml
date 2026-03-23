@@ -72,7 +72,7 @@ jobs:
         working-directory: ./component
         run: |
           terraform plan \
-            -var-file="../vars/${{ inputs.environment }}/${{ inputs.component }}/terraform.tfvars" \
+            -var-file="../vars/${{ inputs.environment }}/${{ inputs.component }}s/terraform.tfvars" \
             -out=tfplan
 
       - name: Terraform Apply
