@@ -58,10 +58,10 @@ jobs:
         working-directory: ./component
         run: |
           terraform init \
-            -backend-config="../vars/${{ inputs.environment }}/${{ inputs.component }}/backend.tfvars"
+            -backend-config="../vars/${{ inputs.environment }}/${{ inputs.component }}s/backend.tfvars"
 
       - name: Terraform Plan
-        working-directory: ./component-repo
+        working-directory: ./component
         run: |
           terraform plan \
             -var-file="../vars/${{ inputs.environment }}/${{ inputs.component }}/terraform.tfvars" \
