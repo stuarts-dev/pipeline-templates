@@ -6,7 +6,11 @@ on:
       cloud:
         description: 'The cloud on which the resources will be provisioned'
         required: false
-        type: string        
+        type: string
+      credentials:
+        description: 'The variables required for cloud authentication'
+        required: true
+        type: string
       account:
         description: 'The name of the GitHub Account'
         required: false
@@ -37,6 +41,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Inject Credentials
+        run: |
+          echo "${{ inputs.credentials }}" >> $GITHUB_ENV
+
       - name: Checkout Variables
         uses: actions/checkout@v4
         with:
