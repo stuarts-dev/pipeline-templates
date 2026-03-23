@@ -5,7 +5,7 @@ on:
     inputs:
       cloud:
         description: 'The cloud on which the resources will be provisioned'
-        requried: false
+        required: false
         type: string        
       account:
         description: 'The name of the GitHub Account'
