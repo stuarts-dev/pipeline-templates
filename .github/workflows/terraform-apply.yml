@@ -66,7 +66,7 @@ jobs:
         working-directory: ./component
         run: |
           terraform init \
-            -backend-config="../vars/${{ inputs.environment }}/${{ inputs.component }}s/backend.tfvars"
+            -backend-config="../vars/${{ inputs.environment }}/${{ inputs.component }}s/backend.tfvars" -reconfigure
 
       - name: Terraform Plan
         working-directory: ./component
@@ -76,5 +76,5 @@ jobs:
             -out=tfplan
 
       - name: Terraform Apply
-        working-directory: ./component-repo
+        working-directory: ./component
         run: terraform apply -auto-approve tfplan
